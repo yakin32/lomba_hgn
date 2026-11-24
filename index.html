@@ -3,112 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#081440">
-  <title>Layar Tampilan (Proyektor) – Family 100 SMK Negeri 12 Jakarta</title>
-  <link rel="stylesheet" href="display.css">
+  <meta name="theme-color" content="#071b57">
+  <title>Panel Operator Guru – Family 100 SMK Negeri 12 Jakarta</title>
+  <link rel="stylesheet" href="operator.css">
 </head>
 <body>
-  <div class="app">
-    <!-- TOPBAR -->
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo-box">
-          <div class="logo-badge">
-            <image src="logo.png" width="100" height="100">
-          </div>
-        </div>
-        <div>
-          <h1>FAMILY 100 – SMK NEGERI 12 JAKARTA</h1>
-          <p class="subtitle">Mata Pelajaran Sosiologi • Konflik Sosial</p>
-        </div>
+  <div class="container">
+    <!-- TOP HEADER -->
+    <header class="header">
+      <div class="header-title">
+        <h1>🎛️ Panel Operator Guru</h1>
+        <p>Family 100 • SMK Negeri 12 Jakarta</p>
       </div>
-      <div class="header-actions">
-        <span id="sync-status" class="pill" title="Status koneksi ke Operator">
-          <span class="status-dot offline" id="sync-dot"></span>
-
+      <div class="header-tools">
+        <span class="sync-badge">
+          <span class="dot" id="sync-dot"></span>
+          <span id="sync-status">Layar Terhubung</span>
         </span>
-        <span id="turn-status" class="pill pill-active-team" aria-live="polite">Giliran: Tim 1</span>
-        <button id="sound-button" class="header-btn" type="button" title="Aktifkan efek suara di layar ini">🔊 Suara: Mati</button>
-        <button id="fullscreen-button" class="header-btn" type="button" title="Tampilkan Layar Penuh (F11)">⛶ Layar Penuh</button>
+        <button id="open-display-btn" class="btn primary" type="button" title="Buka jendela layar proyektor untuk audiens">
+          📺 Buka Layar Proyektor
+        </button>
+        <button id="test-sound-btn" class="btn dark" type="button" title="Kirim tes bunyi ke layar proyektor">
+          🔔 Tes Suara
+        </button>
       </div>
     </header>
 
-    <!-- ARENA PERMAINAN -->
-    <main class="arena" aria-label="Arena Kuis Family 100">
-      <!-- TIM 1 -->
-      <aside id="team-panel-0" class="team active" aria-label="Panel Tim 1">
-        <span class="team-label">TIM 1</span>
-        <h2 id="team-display-0" class="team-name">Tim 1</h2>
-        <div id="score-0" class="score" aria-live="polite">0</div>
-        <span class="score-caption">TOTAL POIN</span>
-        <div id="strikes-0" class="strikes" aria-label="Kesalahan Tim 1"></div>
-        <span class="turn-badge">GILIRAN AKTIF</span>
-      </aside>
+    <!-- GRID UTAMA -->
+    <main class="main-grid">
+      <!-- KOLOM KIRI: MONITOR & KONTROL CEPAT -->
+      <section class="panel-card">
+        <h2 class="panel-title">
+          <span>📊 Status Permainan Langsung</span>
+          <span id="current-round-tag" style="font-size:13px;color:var(--gold)">Soal 1 / 10</span>
+        </h2>
 
-      <!-- PAPAN SOAL TENGAH -->
-      <section class="board" aria-label="Papan Soal dan Kartu Jawaban">
-        <div class="board-head">
-          <span id="round-label" class="round-label">Soal 1 dari 10</span>
-          <span class="max-label">MAKS. 310 POIN / SOAL</span>
+        <!-- PREVIEW DUA TIM -->
+        <div class="teams-preview">
+          <div id="team-box-0" class="team-box active">
+            <span class="active-badge">GILIRAN</span>
+            <div class="team-box-tag">TIM 1</div>
+            <div id="team-name-0" class="team-box-name">Tim 1</div>
+            <div id="team-score-0" class="team-box-score">0</div>
+            <div id="team-strikes-0" class="team-box-strikes">⚪ ⚪ ⚪</div>
+          </div>
+          <div id="team-box-1" class="team-box">
+            <span class="active-badge">GILIRAN</span>
+            <div class="team-box-tag">TIM 2</div>
+            <div id="team-name-1" class="team-box-name">Tim 2</div>
+            <div id="team-score-1" class="team-box-score">0</div>
+            <div id="team-strikes-1" class="team-box-strikes">⚪ ⚪ ⚪</div>
+          </div>
         </div>
-        <div class="progress" role="progressbar" aria-label="Kemajuan Soal" aria-valuemin="0" aria-valuemax="10" aria-valuenow="1">
-          <div id="progress-fill" class="progress-fill"></div>
+
+        <!-- SOAL YANG SEDANG AKTIF -->
+        <div class="question-monitor">
+          <div class="qm-header">
+            <span id="qm-label">Pertanyaan Saat Ini:</span>
+            <span>Maks: 310 Poin</span>
+          </div>
+          <div id="qm-question" class="qm-text">Memuat pertanyaan...</div>
         </div>
-        <h2 id="question" class="question">Memuat soal survei...</h2>
-        <div id="cards" class="cards" aria-label="Enam Jawaban Survei"></div>
+
+        <!-- FORM CEK JAWABAN SISWA -->
+        <div class="input-section">
+          <div class="input-row">
+            <input id="answer-input" type="text" autocomplete="off" placeholder="Ketik jawaban siswa di sini...">
+            <button id="check-btn" class="btn primary" type="button">Cek Jawaban</button>
+          </div>
+        </div>
+
+        <!-- TOMBOL AKSI KONTROL -->
+        <div class="actions-grid">
+          <button id="wrong-btn" class="btn danger" type="button" style="font-size:15px">
+            ❌ Salah / Strike
+          </button>
+          <button id="switch-btn" class="btn dark" type="button">
+            🔄 Ganti Giliran Tim
+          </button>
+          <button id="reset-x-btn" class="btn dark" type="button">
+            🧹 Reset Strike (❌)
+          </button>
+          <button id="reveal-all-btn" class="btn dark" type="button">
+            👁️ Buka Semua (0 Poin)
+          </button>
+          <button id="prev-question-btn" class="btn dark" type="button">
+            ◀ Soal Sebelumnya
+          </button>
+          <button id="next-question-btn" class="btn success" type="button">
+            Soal Berikutnya ▶
+          </button>
+          <button id="reset-round-btn" class="btn dark" type="button">
+            ↺ Ulangi Soal Ini
+          </button>
+          <button id="reset-game-btn" class="btn dark" type="button" style="border-color:#e74c3c">
+            ⚠️ Reset Game Baru
+          </button>
+        </div>
+
+        <!-- PENGATURAN NAMA TIM -->
+        <div class="names-section">
+          <div class="name-field">
+            <label for="name-in-0">Nama Tim 1</label>
+            <input id="name-in-0" type="text" maxlength="24" value="Tim 1">
+          </div>
+          <div class="name-field">
+            <label for="name-in-1">Nama Tim 2</label>
+            <input id="name-in-1" type="text" maxlength="24" value="Tim 2">
+          </div>
+        </div>
       </section>
 
-      <!-- TIM 2 -->
-      <aside id="team-panel-1" class="team" aria-label="Panel Tim 2">
-        <span class="team-label">TIM 2</span>
-        <h2 id="team-display-1" class="team-name">Tim 2</h2>
-        <div id="score-1" class="score" aria-live="polite">0</div>
-        <span class="score-caption">TOTAL POIN</span>
-        <div id="strikes-1" class="strikes" aria-label="Kesalahan Tim 2"></div>
-        <span class="turn-badge">GILIRAN AKTIF</span>
-      </aside>
+      <!-- KOLOM KANAN: CHEAT SHEET KUNCI JAWABAN LIVE -->
+      <section class="panel-card">
+        <h2 class="panel-title">
+          <span>📋 Kunci Jawaban Lengkap (Cheat Sheet Guru)</span>
+          <span style="font-size:12px;color:#aebfe9">Klik tombol hijau untuk buka instan</span>
+        </h2>
+        <div id="answers-container" class="answers-list" aria-label="Daftar Kunci Jawaban Survei">
+          <!-- 6 Jawaban dirender secara dinamis di sini -->
+        </div>
+        <div style="margin-top:16px;background:#051233;padding:12px;border-radius:10px;font-size:13px;line-height:1.5;color:#bcd0f7">
+          <strong style="color:var(--gold)">💡 Tips Penggunaan Guru:</strong>
+          <ul style="margin:6px 0 0;padding-left:20px">
+            <li>Jika siswa menjawab secara lisan dan cocok, klik tombol <strong>"Buka (+poin)"</strong> di kartu yang sesuai tanpa perlu mengetik.</li>
+            <li>Jika ingin mencocokkan otomatis, ketik di kolom <em>Jawaban siswa</em> lalu tekan Enter.</li>
+            <li>Klik <strong>"Buka Layar Proyektor"</strong> untuk membuka tab/jendela baru yang bersih untuk dilihat siswa/penonton.</li>
+          </ul>
+        </div>
+      </section>
     </main>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-      <div class="footer-left">Kuis Kelas Interaktif • SMK Negeri 12 Jakarta</div>
-      <div class="footer-right">Layar Tampilan Proyektor • Dikendalikan via Panel Operator</div>
-    </footer>
   </div>
 
   <!-- TOAST NOTIFIKASI -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <!-- EFEK SALAH (❌) -->
-  <div id="wrong-overlay" class="wrong-overlay" aria-hidden="true">
-    <span>❌</span>
-  </div>
-
-  <!-- MODAL KEMENANGAN -->
-  <div id="win-modal" class="modal-layer" role="dialog" aria-modal="true" aria-hidden="true">
-    <div id="fireworks" class="fireworks" aria-hidden="true"></div>
-    <div class="modal">
-      <h2>🏆 Permainan Selesai!</h2>
-      <p id="winner-text" class="winner"></p>
-      <div class="final-scores">
-        <div>
-          <span id="final-name-0">Tim 1</span>
-          <strong id="final-score-0">0</strong>
-        </div>
-        <div>
-          <span id="final-name-1">Tim 2</span>
-          <strong id="final-score-1">0</strong>
-        </div>
-      </div>
-      <p id="total-text" style="color:#bcd0f7;font-size:18px"></p>
-    </div>
-  </div>
-
   <!-- IMPORT DATA SOAL -->
   <script src="questions.js"></script>
 
   <script>
-    /* STATE GAME DISPLAY */
+    /* STATE OPERATOR (Master Controller) */
     const state = {
       index: 0,
       scores: [0, 0],
@@ -116,50 +150,55 @@
       active: 0,
       strikes: [0, 0],
       opened: [],
-      ended: false,
-      sound: false
+      ended: false
     };
 
     const $ = id => document.getElementById(id);
-    let toastTimer, audioContext;
+    let toastTimer;
 
-    /* AUDIO SYNTHESIZER */
-    function getAudio() {
-      try {
-        audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
-        if (audioContext.state === "suspended") audioContext.resume();
-        return audioContext;
-      } catch (e) {
-        return null;
+    /* FUZZY MATCHING NLP (Normalisasi, Levenshtein, Jaccard) */
+    function normalize(value) {
+      return String(value)
+        .toLocaleLowerCase("id-ID")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function distance(a, b) {
+      let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+      for (let i = 1; i <= a.length; i++) {
+        const row = [i];
+        for (let j = 1; j <= b.length; j++) {
+          row[j] = Math.min(row[j - 1] + 1, prev[j] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        }
+        prev = row;
       }
+      return prev[b.length];
     }
 
-    function tone(freq, start, duration, type = "sine", volume = 0.14) {
-      if (!state.sound) return;
-      const ctx = getAudio();
-      if (!ctx) return;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      const t = ctx.currentTime + start;
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, t);
-      gain.gain.setValueAtTime(0.001, t);
-      gain.gain.exponentialRampToValueAtTime(volume, t + 0.025);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(t);
-      osc.stop(t + duration + 0.02);
+    function similarity(input, key) {
+      const a = normalize(input);
+      const b = normalize(key);
+      if (!a || !b) return 0;
+      if (a === b) return 1;
+      if (Math.min(a.length, b.length) >= 4 && (a.includes(b) || b.includes(a))) return 0.91;
+      const at = new Set(a.split(" "));
+      const bt = new Set(b.split(" "));
+      const intersection = [...at].filter(x => bt.has(x)).length;
+      const jaccard = intersection / (at.size + bt.size - intersection);
+      const lev = 1 - distance(a, b) / Math.max(a.length, b.length);
+      return Math.max(jaccard * 0.94, lev * 0.87);
     }
 
-    function playCorrect() {
-      [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.11, 0.26, "sine", 0.15));
-    }
-    function playWrong() {
-      tone(175, 0, 0.22, "sawtooth", 0.16);
-      tone(118, 0.18, 0.36, "sawtooth", 0.12);
-    }
-    function playWin() {
-      [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, i * 0.15, i === 6 ? 0.75 : 0.26, "triangle", 0.18));
+    function matchesFor(input) {
+      const currentQ = questions[state.index];
+      return currentQ.answers.map((item, i) => ({
+        i,
+        score: Math.max(...item.keywords.map(k => similarity(input, k)))
+      })).sort((a, b) => b.score - a.score);
     }
 
     function toast(message) {
@@ -170,232 +209,326 @@
       toastTimer = setTimeout(() => el.classList.remove("show"), 2800);
     }
 
-    function floatingPoints(points, teamIdx) {
-      const node = document.createElement("div");
-      node.className = "float-score";
-      node.textContent = `+${points} POIN!`;
-      $("team-panel-" + teamIdx).appendChild(node);
-      setTimeout(() => node.remove(), 1400);
-    }
-
-    function triggerWrongEffect() {
-      const overlay = $("wrong-overlay");
-      overlay.classList.remove("show");
-      void overlay.offsetWidth;
-      overlay.classList.add("show");
-      playWrong();
-    }
-
-    /* RENDER DISPLAY */
-    function render() {
-      const currentQ = questions[state.index] || questions[0];
-      $("round-label").textContent = `Soal ${state.index + 1} dari ${questions.length}`;
-      $("question").textContent = currentQ.question;
-      $("progress-fill").style.width = `${((state.index + 1) / questions.length) * 100}%`;
-      $("turn-status").textContent = `Giliran: ${state.names[state.active]}`;
-
-      for (let i = 0; i < 2; i++) {
-        $("team-display-" + i).textContent = state.names[i];
-        $("score-" + i).textContent = state.scores[i];
-        $("team-panel-" + i).classList.toggle("active", state.active === i);
-        $("strikes-" + i).innerHTML = Array.from({ length: 3 }, (_, j) =>
-          `<span class="strike ${j < state.strikes[i] ? "on" : ""}" aria-hidden="true">❌</span>`
-        ).join("");
-      }
-
-      // Render 6 kartu
-      const cards = $("cards");
-      cards.innerHTML = "";
-      const openedSet = new Set(state.opened || []);
-
-      currentQ.answers.forEach((item, i) => {
-        const isOpen = openedSet.has(i);
-        const card = document.createElement("div");
-        card.className = `card ${isOpen ? "open" : ""}`;
-        card.id = `card-${i + 1}`;
-        card.innerHTML = `
-          <div class="card-inner">
-            <div class="face front">
-              <span class="number">${i + 1}</span>
-              <span class="hidden-mark">???</span>
-              <span class="points">${item.points}</span>
-            </div>
-            <div class="face back">
-              <span class="answer-text">${item.answer}</span>
-              <span class="points">${item.points}</span>
-            </div>
-          </div>
-        `;
-        cards.appendChild(card);
-      });
-
-      // Status modal kemenangan
-      if (state.ended) {
-        showWinModal();
-      } else {
-        $("win-modal").classList.remove("show");
-      }
-    }
-
-    function showWinModal() {
-      $("final-name-0").textContent = state.names[0];
-      $("final-name-1").textContent = state.names[1];
-      $("final-score-0").textContent = state.scores[0];
-      $("final-score-1").textContent = state.scores[1];
-      $("total-text").textContent = `Total Poin Keseluruhan: ${state.scores[0] + state.scores[1]}`;
-      
-      if (state.scores[0] === state.scores[1]) {
-        $("winner-text").textContent = "🤝 Hasil Seri! Pertandingan Luar Biasa!";
-      } else {
-        const winIdx = state.scores[0] > state.scores[1] ? 0 : 1;
-        $("winner-text").textContent = `🏆 Selamat Kepada ${state.names[winIdx]} Sebagai Juara!`;
-      }
-
-      const fire = $("fireworks");
-      fire.innerHTML = "";
-      for (let i = 0; i < 80; i++) {
-        const spark = document.createElement("span");
-        spark.className = "spark";
-        spark.style.cssText = `
-          --x: ${10 + Math.random() * 80}%;
-          --y: ${10 + Math.random() * 65}%;
-          --dx: ${(Math.random() - 0.5) * 260}px;
-          --dy: ${(Math.random() - 0.5) * 260}px;
-          --delay: ${Math.random() * 2}s;
-          --color: ${["#ffd44d", "#4bd8ff", "#ff334b", "#ffffff", "#2ecc71"][i % 5]}
-        `;
-        fire.appendChild(spark);
-      }
-      $("win-modal").classList.add("show");
-      playWin();
-    }
-
-    /* REALTIME SYNC (BroadcastChannel + localStorage + postMessage) */
+    /* REALTIME BROADCAST & SYNC CHANNEL */
     const channel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("family100_channel") : null;
+    let displayWindow = null;
 
-    function applySyncedState(incoming, action) {
-      const prevOpened = new Set(state.opened || []);
-      const newOpened = new Set(incoming.opened || []);
+    function broadcastState(action = null) {
+      const payload = {
+        type: "STATE_UPDATE",
+        state: { ...state, opened: [...state.opened] },
+        action
+      };
 
-      // Deteksi kartu mana yang baru saja dibuka untuk efek floating points & sound
-      if (action && action.type === "OPEN_ANSWER") {
-        floatingPoints(action.points, incoming.active);
-        playCorrect();
-      } else if (action && action.type === "MARK_WRONG") {
-        triggerWrongEffect();
+      // 1. Kirim via BroadcastChannel
+      if (channel) {
+        channel.postMessage(payload);
       }
 
-      // Update state
-      state.index = incoming.index ?? state.index;
-      state.scores = [...(incoming.scores ?? state.scores)];
-      state.names = [...(incoming.names ?? state.names)];
-      state.active = incoming.active ?? state.active;
-      state.strikes = [...(incoming.strikes ?? state.strikes)];
-      state.opened = [...(incoming.opened ?? [])];
-      state.ended = !!incoming.ended;
+      // 2. Simpan di localStorage (storage event untuk tab lain)
+      try {
+        localStorage.setItem("family100_sync", JSON.stringify(payload));
+      } catch (e) {}
 
-      render();
-      setConnected(true);
-    }
-
-    function setConnected(active) {
-      const dot = $("sync-dot");
-      const txt = $("sync-text");
-      if (active) {
-        dot.classList.remove("offline");
-        txt.textContent = "🟢 Terhubung ke Operator";
-      } else {
-        dot.classList.add("offline");
-        txt.textContent = "🟡 Menunggu Operator...";
+      // 3. Kirim langsung via postMessage jika display dibuka lewat window.open
+      if (displayWindow && !displayWindow.closed) {
+        try {
+          displayWindow.postMessage(payload, "*");
+        } catch (e) {}
       }
     }
 
-    // 1. BroadcastChannel Listener
+    function broadcastSound(soundName) {
+      if (channel) {
+        channel.postMessage({ type: "PLAY_SOUND", sound: soundName });
+      }
+      if (displayWindow && !displayWindow.closed) {
+        displayWindow.postMessage({ type: "PLAY_SOUND", sound: soundName }, "*");
+      }
+    }
+
+    // Listener dari Layar Tampilan
     if (channel) {
-      channel.onmessage = event => {
-        const msg = event.data;
-        if (!msg) return;
-        if (msg.type === "STATE_UPDATE") {
-          applySyncedState(msg.state, msg.action);
-        } else if (msg.type === "REQUEST_SYNC") {
-          // Display bisa kirim state balik jika operator baru dibuka
-        } else if (msg.type === "PLAY_SOUND") {
-          if (msg.sound === "correct") playCorrect();
-          if (msg.sound === "wrong") triggerWrongEffect();
-          if (msg.sound === "win") playWin();
-        } else if (msg.type === "PING") {
-          setConnected(true);
-          channel.postMessage({ type: "PONG" });
+      channel.onmessage = e => {
+        if (!e.data) return;
+        if (e.data.type === "REQUEST_SYNC") {
+          broadcastState();
+          setSyncStatus(true);
+        } else if (e.data.type === "PONG") {
+          setSyncStatus(true);
         }
       };
     }
 
-    // 2. LocalStorage StorageEvent fallback
-    window.addEventListener("storage", e => {
-      if (e.key === "family100_sync") {
-        try {
-          const data = JSON.parse(e.newValue);
-          if (data && data.state) {
-            applySyncedState(data.state, data.action);
-          }
-        } catch (err) {}
+    function setSyncStatus(connected) {
+      const dot = $("sync-dot");
+      const txt = $("sync-status");
+      if (connected) {
+        dot.classList.remove("offline");
+        txt.textContent = "Layar Terhubung";
+      } else {
+        dot.classList.add("offline");
+        txt.textContent = "Layar Belum Terhubung";
+      }
+    }
+
+    // Ping berkala cek apakah ada display aktif
+    setInterval(() => {
+      if (channel) channel.postMessage({ type: "PING" });
+    }, 4000);
+
+    /* RENDER OPERATOR UI */
+    function render() {
+      const currentQ = questions[state.index] || questions[0];
+      $("current-round-tag").textContent = `Soal ${state.index + 1} / ${questions.length}`;
+      $("qm-question").textContent = currentQ.question;
+
+      // Status Tim
+      for (let i = 0; i < 2; i++) {
+        $("team-name-" + i).textContent = state.names[i];
+        $("team-score-" + i).textContent = state.scores[i];
+        $("team-box-" + i).classList.toggle("active", state.active === i);
+        
+        let strikesStr = "";
+        for (let j = 0; j < 3; j++) {
+          strikesStr += (j < state.strikes[i] ? "❌ " : "⚪ ");
+        }
+        $("team-strikes-" + i).textContent = strikesStr.trim();
+      }
+
+      // Render Cheat Sheet Kunci Jawaban
+      const container = $("answers-container");
+      container.innerHTML = "";
+      const openedSet = new Set(state.opened || []);
+
+      currentQ.answers.forEach((ans, i) => {
+        const isOpened = openedSet.has(i);
+        const item = document.createElement("div");
+        item.className = `answer-item ${isOpened ? "opened" : ""}`;
+        item.innerHTML = `
+          <div class="ans-left">
+            <span class="ans-num">${i + 1}</span>
+            <div class="ans-info">
+              <div class="ans-text">${ans.answer} ${isOpened ? "✓ (Terbuka)" : ""}</div>
+              <div class="ans-keywords" title="Kata kunci: ${ans.keywords.join(', ')}">Kata kunci: ${ans.keywords.join(", ")}</div>
+            </div>
+          </div>
+          <div class="ans-right">
+            <span class="ans-points">${ans.points} Poin</span>
+            <button class="btn ans-btn ${isOpened ? 'dark' : 'success'}" type="button" ${isOpened ? 'disabled' : ''} data-index="${i}">
+              ${isOpened ? "Terbuka" : "Buka (+poin)"}
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+
+      // Event listener tombol 1-klik per kartu
+      container.querySelectorAll(".ans-btn").forEach(btn => {
+        btn.addEventListener("click", e => {
+          const idx = Number(btn.getAttribute("data-index"));
+          openAnswer(idx, true);
+        });
+      });
+    }
+
+    /* GAME ACTIONS */
+    function openAnswer(i, award = true) {
+      if (state.opened.includes(i)) {
+        toast("Jawaban ini sudah terbuka sebelumnya.");
+        return;
+      }
+      const ans = questions[state.index].answers[i];
+      state.opened.push(i);
+
+      if (award) {
+        state.scores[state.active] += ans.points;
+        toast(`✅ Benar! "${ans.answer}" (+${ans.points} poin untuk ${state.names[state.active]})`);
+        broadcastState({ type: "OPEN_ANSWER", index: i, points: ans.points });
+      } else {
+        toast(`Jawaban dibuka: "${ans.answer}" (tanpa poin)`);
+        broadcastState({ type: "REVEAL_ANSWER", index: i });
+      }
+
+      render();
+      $("answer-input").value = "";
+      $("answer-input").focus();
+    }
+
+    function markWrong() {
+      if (state.strikes[state.active] >= 3) {
+        toast(`⚠️ ${state.names[state.active]} sudah 3x salah! Gunakan tombol Ganti Giliran Tim.`);
+        return;
+      }
+      state.strikes[state.active]++;
+      toast(`❌ Salah! Kesalahan ${state.names[state.active]}: ${state.strikes[state.active]}/3`);
+      broadcastState({ type: "MARK_WRONG" });
+      render();
+    }
+
+    function checkAnswer() {
+      const input = $("answer-input").value.trim();
+      if (!input) {
+        toast("Ketik jawaban siswa terlebih dahulu.");
+        return;
+      }
+      const ranked = matchesFor(input);
+      const best = ranked[0];
+
+      if (best.score < 0.68) {
+        markWrong();
+        return;
+      }
+
+      if (state.opened.includes(best.i)) {
+        toast(`Jawaban "${questions[state.index].answers[best.i].answer}" sudah terbuka sebelumnya.`);
+        return;
+      }
+
+      openAnswer(best.i, true);
+    }
+
+    function switchTeam() {
+      state.active = 1 - state.active;
+      state.strikes = [0, 0];
+      toast(`🔄 Giliran berpindah ke ${state.names[state.active]}. Strike direset.`);
+      broadcastState({ type: "SWITCH_TEAM" });
+      render();
+    }
+
+    function resetStrikes() {
+      state.strikes = [0, 0];
+      toast("🧹 Semua tanda ❌ (strike) kedua tim berhasil direset.");
+      broadcastState({ type: "RESET_STRIKES" });
+      render();
+    }
+
+    function revealAll() {
+      const allIndexes = questions[state.index].answers.map((_, i) => i);
+      state.opened = allIndexes;
+      toast("👁️ Semua jawaban berhasil dibuka (tanpa poin).");
+      broadcastState({ type: "REVEAL_ALL" });
+      render();
+    }
+
+    function nextQuestion() {
+      if (state.index >= questions.length - 1) {
+        state.ended = true;
+        toast("🏆 Seluruh 10 soal selesai! Layar kemenangan ditampilkan.");
+        broadcastState({ type: "FINISH_GAME" });
+        render();
+        return;
+      }
+      state.index++;
+      state.strikes = [0, 0];
+      state.opened = [];
+      state.ended = false;
+      $("answer-input").value = "";
+      toast(`▶ Soal ${state.index + 1} dimulai!`);
+      broadcastState({ type: "NEXT_QUESTION" });
+      render();
+    }
+
+    function prevQuestion() {
+      if (state.index <= 0) {
+        toast("Ini sudah soal pertama.");
+        return;
+      }
+      state.index--;
+      state.strikes = [0, 0];
+      state.opened = [];
+      state.ended = false;
+      $("answer-input").value = "";
+      toast(`◀ Kembali ke soal ${state.index + 1}`);
+      broadcastState({ type: "PREV_QUESTION" });
+      render();
+    }
+
+    function resetRound() {
+      state.strikes = [0, 0];
+      state.opened = [];
+      toast("↺ Soal saat ini diulang (kartu dan strike direset, skor tim tetap).");
+      broadcastState({ type: "RESET_ROUND" });
+      render();
+    }
+
+    function resetGame() {
+      if (!confirm("Apakah Anda yakin ingin mereset seluruh permainan dari soal pertama? Skor akan kembali 0.")) return;
+      state.index = 0;
+      state.scores = [0, 0];
+      state.active = 0;
+      state.strikes = [0, 0];
+      state.opened = [];
+      state.ended = false;
+      $("answer-input").value = "";
+      toast("⚠️ Seluruh permainan direset dari awal!");
+      broadcastState({ type: "RESET_GAME" });
+      render();
+    }
+
+    /* BUKA JENDELA DISPLAY */
+    $("open-display-btn").addEventListener("click", () => {
+      displayWindow = window.open("display.html", "family100_display", "width=1280,height=720,menubar=no,toolbar=no");
+      if (displayWindow) {
+        toast("📺 Layar tampilan proyektor dibuka di jendela baru!");
+        setTimeout(() => broadcastState(), 600);
       }
     });
 
-    // 3. Window PostMessage listener
-    window.addEventListener("message", e => {
-      if (e.data && e.data.type === "STATE_UPDATE") {
-        applySyncedState(e.data.state, e.data.action);
+    $("test-sound-btn").addEventListener("click", () => {
+      broadcastSound("correct");
+      toast("🔔 Mengirim sinyal bunyi 'Benar' ke layar tampilan.");
+    });
+
+    /* EVENT LISTENERS KONTROL */
+    $("check-btn").addEventListener("click", checkAnswer);
+    $("answer-input").addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        checkAnswer();
       }
     });
 
-    // Cek localStorage saat awal load
+    $("wrong-btn").addEventListener("click", markWrong);
+    $("switch-btn").addEventListener("click", switchTeam);
+    $("reset-x-btn").addEventListener("click", resetStrikes);
+    $("reveal-all-btn").addEventListener("click", revealAll);
+    $("next-question-btn").addEventListener("click", nextQuestion);
+    $("prev-question-btn").addEventListener("click", prevQuestion);
+    $("reset-round-btn").addEventListener("click", resetRound);
+    $("reset-game-btn").addEventListener("click", resetGame);
+
+    // Ubah Nama Tim
+    [0, 1].forEach(i => {
+      $("name-in-" + i).addEventListener("input", e => {
+        state.names[i] = e.target.value.trim() || `Tim ${i + 1}`;
+        render();
+        broadcastState({ type: "UPDATE_NAMES" });
+      });
+    });
+
+    // Cek cache localStorage jika ada state sebelumnya
     try {
       const cached = localStorage.getItem("family100_sync");
       if (cached) {
         const parsed = JSON.parse(cached);
         if (parsed && parsed.state) {
-          applySyncedState(parsed.state);
+          state.index = parsed.state.index ?? 0;
+          state.scores = parsed.state.scores ?? [0, 0];
+          state.names = parsed.state.names ?? ["Tim 1", "Tim 2"];
+          state.active = parsed.state.active ?? 0;
+          state.strikes = parsed.state.strikes ?? [0, 0];
+          state.opened = parsed.state.opened ?? [];
+          state.ended = !!parsed.state.ended;
+          $("name-in-0").value = state.names[0];
+          $("name-in-1").value = state.names[1];
         }
       }
     } catch (e) {}
 
-    // Beritahu operator bahwa display aktif
-    if (channel) {
-      channel.postMessage({ type: "REQUEST_SYNC" });
-    }
-
-    /* TOMBOL SUARA & FULLSCREEN */
-    $("sound-button").addEventListener("click", () => {
-      state.sound = !state.sound;
-      if (state.sound) {
-        getAudio();
-        playCorrect();
-      }
-      $("sound-button").textContent = state.sound ? "🔊 Suara: Aktif" : "🔇 Suara: Mati";
-      toast(state.sound ? "Suara layar tampilan diaktifkan." : "Suara layar tampilan dimatikan.");
-    });
-
-    $("fullscreen-button").addEventListener("click", () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
-        $("fullscreen-button").textContent = "🗗 Keluar Penuh";
-      } else {
-        document.exitFullscreen().catch(() => {});
-        $("fullscreen-button").textContent = "⛶ Layar Penuh";
-      }
-    });
-
-    document.addEventListener("fullscreenchange", () => {
-      if (!document.fullscreenElement) {
-        $("fullscreen-button").textContent = "⛶ Layar Penuh";
-      } else {
-        $("fullscreen-button").textContent = "🗗 Keluar Penuh";
-      }
-    });
-
-    // Render inisial
+    // Inisialisasi awal
     render();
+    broadcastState();
   </script>
 </body>
 </html>

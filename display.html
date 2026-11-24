@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#081440">
+  <title>Layar Tampilan (Proyektor) – Family 100 SMK Negeri 12 Jakarta</title>
+  <link rel="stylesheet" href="display.css">
+</head>
+<body>
+  <div class="app">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo-box">
+          <div class="logo-badge">
+            <image src="logo.png" width="100" height="100">
+          </div>
+        </div>
+        <div>
+          <h1>FAMILY 100 – SMK NEGERI 12 JAKARTA</h1>
+          <p class="subtitle">Mata Pelajaran Sosiologi • Konflik Sosial</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span id="sync-status" class="pill" title="Status koneksi ke Operator">
+          <span class="status-dot offline" id="sync-dot"></span>
+
+        </span>
+        <span id="turn-status" class="pill pill-active-team" aria-live="polite">Giliran: Tim 1</span>
+        <button id="sound-button" class="header-btn" type="button" title="Aktifkan efek suara di layar ini">🔊 Suara: Mati</button>
+        <button id="fullscreen-button" class="header-btn" type="button" title="Tampilkan Layar Penuh (F11)">⛶ Layar Penuh</button>
+      </div>
+    </header>
+
+    <!-- ARENA PERMAINAN -->
+    <main class="arena" aria-label="Arena Kuis Family 100">
+      <!-- TIM 1 -->
+      <aside id="team-panel-0" class="team active" aria-label="Panel Tim 1">
+        <span class="team-label">TIM 1</span>
+        <h2 id="team-display-0" class="team-name">Tim 1</h2>
+        <div id="score-0" class="score" aria-live="polite">0</div>
+        <span class="score-caption">TOTAL POIN</span>
+        <div id="strikes-0" class="strikes" aria-label="Kesalahan Tim 1"></div>
+        <span class="turn-badge">GILIRAN AKTIF</span>
+      </aside>
+
+      <!-- PAPAN SOAL TENGAH -->
+      <section class="board" aria-label="Papan Soal dan Kartu Jawaban">
+        <div class="board-head">
+          <span id="round-label" class="round-label">Soal 1 dari 10</span>
+          <span class="max-label">MAKS. 310 POIN / SOAL</span>
+        </div>
+        <div class="progress" role="progressbar" aria-label="Kemajuan Soal" aria-valuemin="0" aria-valuemax="10" aria-valuenow="1">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <h2 id="question" class="question">Memuat soal survei...</h2>
+        <div id="cards" class="cards" aria-label="Enam Jawaban Survei"></div>
+      </section>
+
+      <!-- TIM 2 -->
+      <aside id="team-panel-1" class="team" aria-label="Panel Tim 2">
+        <span class="team-label">TIM 2</span>
+        <h2 id="team-display-1" class="team-name">Tim 2</h2>
+        <div id="score-1" class="score" aria-live="polite">0</div>
+        <span class="score-caption">TOTAL POIN</span>
+        <div id="strikes-1" class="strikes" aria-label="Kesalahan Tim 2"></div>
+        <span class="turn-badge">GILIRAN AKTIF</span>
+      </aside>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-left">Kuis Kelas Interaktif • SMK Negeri 12 Jakarta</div>
+      <div class="footer-right">Layar Tampilan Proyektor • Dikendalikan via Panel Operator</div>
+    </footer>
+  </div>
+
+  <!-- TOAST NOTIFIKASI -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- EFEK SALAH (❌) -->
+  <div id="wrong-overlay" class="wrong-overlay" aria-hidden="true">
+    <span>❌</span>
+  </div>
+
+  <!-- MODAL KEMENANGAN -->
+  <div id="win-modal" class="modal-layer" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="fireworks" class="fireworks" aria-hidden="true"></div>
+    <div class="modal">
+      <h2>🏆 Permainan Selesai!</h2>
+      <p id="winner-text" class="winner"></p>
+      <div class="final-scores">
+        <div>
+          <span id="final-name-0">Tim 1</span>
+          <strong id="final-score-0">0</strong>
+        </div>
+        <div>
+          <span id="final-name-1">Tim 2</span>
+          <strong id="final-score-1">0</strong>
+        </div>
+      </div>
+      <p id="total-text" style="color:#bcd0f7;font-size:18px"></p>
+    </div>
+  </div>
+
+  <!-- IMPORT DATA SOAL -->
+  <script src="questions.js"></script>
+
+  <script>
+    /* STATE GAME DISPLAY */
+    const state = {
+      index: 0,
+      scores: [0, 0],
+      names: ["Tim 1", "Tim 2"],
+      active: 0,
+      strikes: [0, 0],
+      opened: [],
+      ended: false,
+      sound: false
+    };
+
+    const $ = id => document.getElementById(id);
+    let toastTimer, audioContext;
+
+    /* AUDIO SYNTHESIZER */
+    function getAudio() {
+      try {
+        audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === "suspended") audioContext.resume();
+        return audioContext;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function tone(freq, start, duration, type = "sine", volume = 0.14) {
+      if (!state.sound) return;
+      const ctx = getAudio();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const t = ctx.currentTime + start;
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0.001, t);
+      gain.gain.exponentialRampToValueAtTime(volume, t + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + duration + 0.02);
+    }
+
+    function playCorrect() {
+      [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.11, 0.26, "sine", 0.15));
+    }
+    function playWrong() {
+      tone(175, 0, 0.22, "sawtooth", 0.16);
+      tone(118, 0.18, 0.36, "sawtooth", 0.12);
+    }
+    function playWin() {
+      [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, i * 0.15, i === 6 ? 0.75 : 0.26, "triangle", 0.18));
+    }
+
+    function toast(message) {
+      const el = $("toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove("show"), 2800);
+    }
+
+    function floatingPoints(points, teamIdx) {
+      const node = document.createElement("div");
+      node.className = "float-score";
+      node.textContent = `+${points} POIN!`;
+      $("team-panel-" + teamIdx).appendChild(node);
+      setTimeout(() => node.remove(), 1400);
+    }
+
+    function triggerWrongEffect() {
+      const overlay = $("wrong-overlay");
+      overlay.classList.remove("show");
+      void overlay.offsetWidth;
+      overlay.classList.add("show");
+      playWrong();
+    }
+
+    /* RENDER DISPLAY */
+    function render() {
+      const currentQ = questions[state.index] || questions[0];
+      $("round-label").textContent = `Soal ${state.index + 1} dari ${questions.length}`;
+      $("question").textContent = currentQ.question;
+      $("progress-fill").style.width = `${((state.index + 1) / questions.length) * 100}%`;
+      $("turn-status").textContent = `Giliran: ${state.names[state.active]}`;
+
+      for (let i = 0; i < 2; i++) {
+        $("team-display-" + i).textContent = state.names[i];
+        $("score-" + i).textContent = state.scores[i];
+        $("team-panel-" + i).classList.toggle("active", state.active === i);
+        $("strikes-" + i).innerHTML = Array.from({ length: 3 }, (_, j) =>
+          `<span class="strike ${j < state.strikes[i] ? "on" : ""}" aria-hidden="true">❌</span>`
+        ).join("");
+      }
+
+      // Render 6 kartu
+      const cards = $("cards");
+      cards.innerHTML = "";
+      const openedSet = new Set(state.opened || []);
+
+      currentQ.answers.forEach((item, i) => {
+        const isOpen = openedSet.has(i);
+        const card = document.createElement("div");
+        card.className = `card ${isOpen ? "open" : ""}`;
+        card.id = `card-${i + 1}`;
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="face front">
+              <span class="number">${i + 1}</span>
+              <span class="hidden-mark">???</span>
+              <span class="points">${item.points}</span>
+            </div>
+            <div class="face back">
+              <span class="answer-text">${item.answer}</span>
+              <span class="points">${item.points}</span>
+            </div>
+          </div>
+        `;
+        cards.appendChild(card);
+      });
+
+      // Status modal kemenangan
+      if (state.ended) {
+        showWinModal();
+      } else {
+        $("win-modal").classList.remove("show");
+      }
+    }
+
+    function showWinModal() {
+      $("final-name-0").textContent = state.names[0];
+      $("final-name-1").textContent = state.names[1];
+      $("final-score-0").textContent = state.scores[0];
+      $("final-score-1").textContent = state.scores[1];
+      $("total-text").textContent = `Total Poin Keseluruhan: ${state.scores[0] + state.scores[1]}`;
+      
+      if (state.scores[0] === state.scores[1]) {
+        $("winner-text").textContent = "🤝 Hasil Seri! Pertandingan Luar Biasa!";
+      } else {
+        const winIdx = state.scores[0] > state.scores[1] ? 0 : 1;
+        $("winner-text").textContent = `🏆 Selamat Kepada ${state.names[winIdx]} Sebagai Juara!`;
+      }
+
+      const fire = $("fireworks");
+      fire.innerHTML = "";
+      for (let i = 0; i < 80; i++) {
+        const spark = document.createElement("span");
+        spark.className = "spark";
+        spark.style.cssText = `
+          --x: ${10 + Math.random() * 80}%;
+          --y: ${10 + Math.random() * 65}%;
+          --dx: ${(Math.random() - 0.5) * 260}px;
+          --dy: ${(Math.random() - 0.5) * 260}px;
+          --delay: ${Math.random() * 2}s;
+          --color: ${["#ffd44d", "#4bd8ff", "#ff334b", "#ffffff", "#2ecc71"][i % 5]}
+        `;
+        fire.appendChild(spark);
+      }
+      $("win-modal").classList.add("show");
+      playWin();
+    }
+
+    /* REALTIME SYNC (BroadcastChannel + localStorage + postMessage) */
+    const channel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("family100_channel") : null;
+
+    function applySyncedState(incoming, action) {
+      const prevOpened = new Set(state.opened || []);
+      const newOpened = new Set(incoming.opened || []);
+
+      // Deteksi kartu mana yang baru saja dibuka untuk efek floating points & sound
+      if (action && action.type === "OPEN_ANSWER") {
+        floatingPoints(action.points, incoming.active);
+        playCorrect();
+      } else if (action && action.type === "MARK_WRONG") {
+        triggerWrongEffect();
+      }
+
+      // Update state
+      state.index = incoming.index ?? state.index;
+      state.scores = [...(incoming.scores ?? state.scores)];
+      state.names = [...(incoming.names ?? state.names)];
+      state.active = incoming.active ?? state.active;
+      state.strikes = [...(incoming.strikes ?? state.strikes)];
+      state.opened = [...(incoming.opened ?? [])];
+      state.ended = !!incoming.ended;
+
+      render();
+      setConnected(true);
+    }
+
+    function setConnected(active) {
+      const dot = $("sync-dot");
+      const txt = $("sync-text");
+      if (active) {
+        dot.classList.remove("offline");
+        txt.textContent = "🟢 Terhubung ke Operator";
+      } else {
+        dot.classList.add("offline");
+        txt.textContent = "🟡 Menunggu Operator...";
+      }
+    }
+
+    // 1. BroadcastChannel Listener
+    if (channel) {
+      channel.onmessage = event => {
+        const msg = event.data;
+        if (!msg) return;
+        if (msg.type === "STATE_UPDATE") {
+          applySyncedState(msg.state, msg.action);
+        } else if (msg.type === "REQUEST_SYNC") {
+          // Display bisa kirim state balik jika operator baru dibuka
+        } else if (msg.type === "PLAY_SOUND") {
+          if (msg.sound === "correct") playCorrect();
+          if (msg.sound === "wrong") triggerWrongEffect();
+          if (msg.sound === "win") playWin();
+        } else if (msg.type === "PING") {
+          setConnected(true);
+          channel.postMessage({ type: "PONG" });
+        }
+      };
+    }
+
+    // 2. LocalStorage StorageEvent fallback
+    window.addEventListener("storage", e => {
+      if (e.key === "family100_sync") {
+        try {
+          const data = JSON.parse(e.newValue);
+          if (data && data.state) {
+            applySyncedState(data.state, data.action);
+          }
+        } catch (err) {}
+      }
+    });
+
+    // 3. Window PostMessage listener
+    window.addEventListener("message", e => {
+      if (e.data && e.data.type === "STATE_UPDATE") {
+        applySyncedState(e.data.state, e.data.action);
+      }
+    });
+
+    // Cek localStorage saat awal load
+    try {
+      const cached = localStorage.getItem("family100_sync");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.state) {
+          applySyncedState(parsed.state);
+        }
+      }
+    } catch (e) {}
+
+    // Beritahu operator bahwa display aktif
+    if (channel) {
+      channel.postMessage({ type: "REQUEST_SYNC" });
+    }
+
+    /* TOMBOL SUARA & FULLSCREEN */
+    $("sound-button").addEventListener("click", () => {
+      state.sound = !state.sound;
+      if (state.sound) {
+        getAudio();
+        playCorrect();
+      }
+      $("sound-button").textContent = state.sound ? "🔊 Suara: Aktif" : "🔇 Suara: Mati";
+      toast(state.sound ? "Suara layar tampilan diaktifkan." : "Suara layar tampilan dimatikan.");
+    });
+
+    $("fullscreen-button").addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+        $("fullscreen-button").textContent = "🗗 Keluar Penuh";
+      } else {
+        document.exitFullscreen().catch(() => {});
+        $("fullscreen-button").textContent = "⛶ Layar Penuh";
+      }
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) {
+        $("fullscreen-button").textContent = "⛶ Layar Penuh";
+      } else {
+        $("fullscreen-button").textContent = "🗗 Keluar Penuh";
+      }
+    });
+
+    // Render inisial
+    render();
+  </script>
+</body>
+</html>
