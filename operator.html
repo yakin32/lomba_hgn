@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071b57">
+  <title>Panel Operator Guru – Family 100 SMK Negeri 12 Jakarta</title>
+  <link rel="stylesheet" href="operator.css">
+</head>
+<body>
+  <div class="container">
+    <!-- TOP HEADER -->
+    <header class="header">
+      <div class="header-title">
+        <h1>🎛️ Panel Operator Guru</h1>
+        <p>Family 100 • SMK Negeri 12 Jakarta</p>
+      </div>
+      <div class="header-tools">
+        <span class="sync-badge">
+          <span class="dot" id="sync-dot"></span>
+          <span id="sync-status">Layar Terhubung</span>
+        </span>
+        <button id="open-display-btn" class="btn primary" type="button" title="Buka jendela layar proyektor untuk audiens">
+          📺 Buka Layar Proyektor
+        </button>
+        <button id="test-sound-btn" class="btn dark" type="button" title="Kirim tes bunyi ke layar proyektor">
+          🔔 Tes Suara
+        </button>
+      </div>
+    </header>
+
+    <!-- GRID UTAMA -->
+    <main class="main-grid">
+      <!-- KOLOM KIRI: MONITOR & KONTROL CEPAT -->
+      <section class="panel-card">
+        <h2 class="panel-title">
+          <span>📊 Status Permainan Langsung</span>
+          <span id="current-round-tag" style="font-size:13px;color:var(--gold)">Soal 1 / 10</span>
+        </h2>
+
+        <!-- PREVIEW DUA TIM -->
+        <div class="teams-preview">
+          <div id="team-box-0" class="team-box active">
+            <span class="active-badge">GILIRAN</span>
+            <div class="team-box-tag">TIM 1</div>
+            <div id="team-name-0" class="team-box-name">Tim 1</div>
+            <div id="team-score-0" class="team-box-score">0</div>
+            <div id="team-strikes-0" class="team-box-strikes">⚪ ⚪ ⚪</div>
+          </div>
+          <div id="team-box-1" class="team-box">
+            <span class="active-badge">GILIRAN</span>
+            <div class="team-box-tag">TIM 2</div>
+            <div id="team-name-1" class="team-box-name">Tim 2</div>
+            <div id="team-score-1" class="team-box-score">0</div>
+            <div id="team-strikes-1" class="team-box-strikes">⚪ ⚪ ⚪</div>
+          </div>
+        </div>
+
+        <!-- SOAL YANG SEDANG AKTIF -->
+        <div class="question-monitor">
+          <div class="qm-header">
+            <span id="qm-label">Pertanyaan Saat Ini:</span>
+            <span>Maks: 310 Poin</span>
+          </div>
+          <div id="qm-question" class="qm-text">Memuat pertanyaan...</div>
+        </div>
+
+        <!-- FORM CEK JAWABAN SISWA -->
+        <div class="input-section">
+          <div class="input-row">
+            <input id="answer-input" type="text" autocomplete="off" placeholder="Ketik jawaban siswa di sini...">
+            <button id="check-btn" class="btn primary" type="button">Cek Jawaban</button>
+          </div>
+        </div>
+
+        <!-- TOMBOL AKSI KONTROL -->
+        <div class="actions-grid">
+          <button id="wrong-btn" class="btn danger" type="button" style="font-size:15px">
+            ❌ Salah / Strike
+          </button>
+          <button id="switch-btn" class="btn dark" type="button">
+            🔄 Ganti Giliran Tim
+          </button>
+          <button id="reset-x-btn" class="btn dark" type="button">
+            🧹 Reset Strike (❌)
+          </button>
+          <button id="reveal-all-btn" class="btn dark" type="button">
+            👁️ Buka Semua (0 Poin)
+          </button>
+          <button id="prev-question-btn" class="btn dark" type="button">
+            ◀ Soal Sebelumnya
+          </button>
+          <button id="next-question-btn" class="btn success" type="button">
+            Soal Berikutnya ▶
+          </button>
+          <button id="reset-round-btn" class="btn dark" type="button">
+            ↺ Ulangi Soal Ini
+          </button>
+          <button id="reset-game-btn" class="btn dark" type="button" style="border-color:#e74c3c">
+            ⚠️ Reset Game Baru
+          </button>
+        </div>
+
+        <!-- PENGATURAN NAMA TIM -->
+        <div class="names-section">
+          <div class="name-field">
+            <label for="name-in-0">Nama Tim 1</label>
+            <input id="name-in-0" type="text" maxlength="24" value="Tim 1">
+          </div>
+          <div class="name-field">
+            <label for="name-in-1">Nama Tim 2</label>
+            <input id="name-in-1" type="text" maxlength="24" value="Tim 2">
+          </div>
+        </div>
+      </section>
+
+      <!-- KOLOM KANAN: CHEAT SHEET KUNCI JAWABAN LIVE -->
+      <section class="panel-card">
+        <h2 class="panel-title">
+          <span>📋 Kunci Jawaban Lengkap (Cheat Sheet Guru)</span>
+          <span style="font-size:12px;color:#aebfe9">Klik tombol hijau untuk buka instan</span>
+        </h2>
+        <div id="answers-container" class="answers-list" aria-label="Daftar Kunci Jawaban Survei">
+          <!-- 6 Jawaban dirender secara dinamis di sini -->
+        </div>
+        <div style="margin-top:16px;background:#051233;padding:12px;border-radius:10px;font-size:13px;line-height:1.5;color:#bcd0f7">
+          <strong style="color:var(--gold)">💡 Tips Penggunaan Guru:</strong>
+          <ul style="margin:6px 0 0;padding-left:20px">
+            <li>Jika siswa menjawab secara lisan dan cocok, klik tombol <strong>"Buka (+poin)"</strong> di kartu yang sesuai tanpa perlu mengetik.</li>
+            <li>Jika ingin mencocokkan otomatis, ketik di kolom <em>Jawaban siswa</em> lalu tekan Enter.</li>
+            <li>Klik <strong>"Buka Layar Proyektor"</strong> untuk membuka tab/jendela baru yang bersih untuk dilihat siswa/penonton.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- TOAST NOTIFIKASI -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- IMPORT DATA SOAL -->
+  <script src="questions.js"></script>
+
+  <script>
+    /* STATE OPERATOR (Master Controller) */
+    const state = {
+      index: 0,
+      scores: [0, 0],
+      names: ["Tim 1", "Tim 2"],
+      active: 0,
+      strikes: [0, 0],
+      opened: [],
+      ended: false
+    };
+
+    const $ = id => document.getElementById(id);
+    let toastTimer;
+
+    /* FUZZY MATCHING NLP (Normalisasi, Levenshtein, Jaccard) */
+    function normalize(value) {
+      return String(value)
+        .toLocaleLowerCase("id-ID")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function distance(a, b) {
+      let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+      for (let i = 1; i <= a.length; i++) {
+        const row = [i];
+        for (let j = 1; j <= b.length; j++) {
+          row[j] = Math.min(row[j - 1] + 1, prev[j] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        }
+        prev = row;
+      }
+      return prev[b.length];
+    }
+
+    function similarity(input, key) {
+      const a = normalize(input);
+      const b = normalize(key);
+      if (!a || !b) return 0;
+      if (a === b) return 1;
+      if (Math.min(a.length, b.length) >= 4 && (a.includes(b) || b.includes(a))) return 0.91;
+      const at = new Set(a.split(" "));
+      const bt = new Set(b.split(" "));
+      const intersection = [...at].filter(x => bt.has(x)).length;
+      const jaccard = intersection / (at.size + bt.size - intersection);
+      const lev = 1 - distance(a, b) / Math.max(a.length, b.length);
+      return Math.max(jaccard * 0.94, lev * 0.87);
+    }
+
+    function matchesFor(input) {
+      const currentQ = questions[state.index];
+      return currentQ.answers.map((item, i) => ({
+        i,
+        score: Math.max(...item.keywords.map(k => similarity(input, k)))
+      })).sort((a, b) => b.score - a.score);
+    }
+
+    function toast(message) {
+      const el = $("toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove("show"), 2800);
+    }
+
+    /* REALTIME BROADCAST & SYNC CHANNEL */
+    const channel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("family100_channel") : null;
+    let displayWindow = null;
+
+    function broadcastState(action = null) {
+      const payload = {
+        type: "STATE_UPDATE",
+        state: { ...state, opened: [...state.opened] },
+        action
+      };
+
+      // 1. Kirim via BroadcastChannel
+      if (channel) {
+        channel.postMessage(payload);
+      }
+
+      // 2. Simpan di localStorage (storage event untuk tab lain)
+      try {
+        localStorage.setItem("family100_sync", JSON.stringify(payload));
+      } catch (e) {}
+
+      // 3. Kirim langsung via postMessage jika display dibuka lewat window.open
+      if (displayWindow && !displayWindow.closed) {
+        try {
+          displayWindow.postMessage(payload, "*");
+        } catch (e) {}
+      }
+    }
+
+    function broadcastSound(soundName) {
+      if (channel) {
+        channel.postMessage({ type: "PLAY_SOUND", sound: soundName });
+      }
+      if (displayWindow && !displayWindow.closed) {
+        displayWindow.postMessage({ type: "PLAY_SOUND", sound: soundName }, "*");
+      }
+    }
+
+    // Listener dari Layar Tampilan
+    if (channel) {
+      channel.onmessage = e => {
+        if (!e.data) return;
+        if (e.data.type === "REQUEST_SYNC") {
+          broadcastState();
+          setSyncStatus(true);
+        } else if (e.data.type === "PONG") {
+          setSyncStatus(true);
+        }
+      };
+    }
+
+    function setSyncStatus(connected) {
+      const dot = $("sync-dot");
+      const txt = $("sync-status");
+      if (connected) {
+        dot.classList.remove("offline");
+        txt.textContent = "Layar Terhubung";
+      } else {
+        dot.classList.add("offline");
+        txt.textContent = "Layar Belum Terhubung";
+      }
+    }
+
+    // Ping berkala cek apakah ada display aktif
+    setInterval(() => {
+      if (channel) channel.postMessage({ type: "PING" });
+    }, 4000);
+
+    /* RENDER OPERATOR UI */
+    function render() {
+      const currentQ = questions[state.index] || questions[0];
+      $("current-round-tag").textContent = `Soal ${state.index + 1} / ${questions.length}`;
+      $("qm-question").textContent = currentQ.question;
+
+      // Status Tim
+      for (let i = 0; i < 2; i++) {
+        $("team-name-" + i).textContent = state.names[i];
+        $("team-score-" + i).textContent = state.scores[i];
+        $("team-box-" + i).classList.toggle("active", state.active === i);
+        
+        let strikesStr = "";
+        for (let j = 0; j < 3; j++) {
+          strikesStr += (j < state.strikes[i] ? "❌ " : "⚪ ");
+        }
+        $("team-strikes-" + i).textContent = strikesStr.trim();
+      }
+
+      // Render Cheat Sheet Kunci Jawaban
+      const container = $("answers-container");
+      container.innerHTML = "";
+      const openedSet = new Set(state.opened || []);
+
+      currentQ.answers.forEach((ans, i) => {
+        const isOpened = openedSet.has(i);
+        const item = document.createElement("div");
+        item.className = `answer-item ${isOpened ? "opened" : ""}`;
+        item.innerHTML = `
+          <div class="ans-left">
+            <span class="ans-num">${i + 1}</span>
+            <div class="ans-info">
+              <div class="ans-text">${ans.answer} ${isOpened ? "✓ (Terbuka)" : ""}</div>
+              <div class="ans-keywords" title="Kata kunci: ${ans.keywords.join(', ')}">Kata kunci: ${ans.keywords.join(", ")}</div>
+            </div>
+          </div>
+          <div class="ans-right">
+            <span class="ans-points">${ans.points} Poin</span>
+            <button class="btn ans-btn ${isOpened ? 'dark' : 'success'}" type="button" ${isOpened ? 'disabled' : ''} data-index="${i}">
+              ${isOpened ? "Terbuka" : "Buka (+poin)"}
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+
+      // Event listener tombol 1-klik per kartu
+      container.querySelectorAll(".ans-btn").forEach(btn => {
+        btn.addEventListener("click", e => {
+          const idx = Number(btn.getAttribute("data-index"));
+          openAnswer(idx, true);
+        });
+      });
+    }
+
+    /* GAME ACTIONS */
+    function openAnswer(i, award = true) {
+      if (state.opened.includes(i)) {
+        toast("Jawaban ini sudah terbuka sebelumnya.");
+        return;
+      }
+      const ans = questions[state.index].answers[i];
+      state.opened.push(i);
+
+      if (award) {
+        state.scores[state.active] += ans.points;
+        toast(`✅ Benar! "${ans.answer}" (+${ans.points} poin untuk ${state.names[state.active]})`);
+        broadcastState({ type: "OPEN_ANSWER", index: i, points: ans.points });
+      } else {
+        toast(`Jawaban dibuka: "${ans.answer}" (tanpa poin)`);
+        broadcastState({ type: "REVEAL_ANSWER", index: i });
+      }
+
+      render();
+      $("answer-input").value = "";
+      $("answer-input").focus();
+    }
+
+    function markWrong() {
+      if (state.strikes[state.active] >= 3) {
+        toast(`⚠️ ${state.names[state.active]} sudah 3x salah! Gunakan tombol Ganti Giliran Tim.`);
+        return;
+      }
+      state.strikes[state.active]++;
+      toast(`❌ Salah! Kesalahan ${state.names[state.active]}: ${state.strikes[state.active]}/3`);
+      broadcastState({ type: "MARK_WRONG" });
+      render();
+    }
+
+    function checkAnswer() {
+      const input = $("answer-input").value.trim();
+      if (!input) {
+        toast("Ketik jawaban siswa terlebih dahulu.");
+        return;
+      }
+      const ranked = matchesFor(input);
+      const best = ranked[0];
+
+      if (best.score < 0.68) {
+        markWrong();
+        return;
+      }
+
+      if (state.opened.includes(best.i)) {
+        toast(`Jawaban "${questions[state.index].answers[best.i].answer}" sudah terbuka sebelumnya.`);
+        return;
+      }
+
+      openAnswer(best.i, true);
+    }
+
+    function switchTeam() {
+      state.active = 1 - state.active;
+      state.strikes = [0, 0];
+      toast(`🔄 Giliran berpindah ke ${state.names[state.active]}. Strike direset.`);
+      broadcastState({ type: "SWITCH_TEAM" });
+      render();
+    }
+
+    function resetStrikes() {
+      state.strikes = [0, 0];
+      toast("🧹 Semua tanda ❌ (strike) kedua tim berhasil direset.");
+      broadcastState({ type: "RESET_STRIKES" });
+      render();
+    }
+
+    function revealAll() {
+      const allIndexes = questions[state.index].answers.map((_, i) => i);
+      state.opened = allIndexes;
+      toast("👁️ Semua jawaban berhasil dibuka (tanpa poin).");
+      broadcastState({ type: "REVEAL_ALL" });
+      render();
+    }
+
+    function nextQuestion() {
+      if (state.index >= questions.length - 1) {
+        state.ended = true;
+        toast("🏆 Seluruh 10 soal selesai! Layar kemenangan ditampilkan.");
+        broadcastState({ type: "FINISH_GAME" });
+        render();
+        return;
+      }
+      state.index++;
+      state.strikes = [0, 0];
+      state.opened = [];
+      state.ended = false;
+      $("answer-input").value = "";
+      toast(`▶ Soal ${state.index + 1} dimulai!`);
+      broadcastState({ type: "NEXT_QUESTION" });
+      render();
+    }
+
+    function prevQuestion() {
+      if (state.index <= 0) {
+        toast("Ini sudah soal pertama.");
+        return;
+      }
+      state.index--;
+      state.strikes = [0, 0];
+      state.opened = [];
+      state.ended = false;
+      $("answer-input").value = "";
+      toast(`◀ Kembali ke soal ${state.index + 1}`);
+      broadcastState({ type: "PREV_QUESTION" });
+      render();
+    }
+
+    function resetRound() {
+      state.strikes = [0, 0];
+      state.opened = [];
+      toast("↺ Soal saat ini diulang (kartu dan strike direset, skor tim tetap).");
+      broadcastState({ type: "RESET_ROUND" });
+      render();
+    }
+
+    function resetGame() {
+      if (!confirm("Apakah Anda yakin ingin mereset seluruh permainan dari soal pertama? Skor akan kembali 0.")) return;
+      state.index = 0;
+      state.scores = [0, 0];
+      state.active = 0;
+      state.strikes = [0, 0];
+      state.opened = [];
+      state.ended = false;
+      $("answer-input").value = "";
+      toast("⚠️ Seluruh permainan direset dari awal!");
+      broadcastState({ type: "RESET_GAME" });
+      render();
+    }
+
+    /* BUKA JENDELA DISPLAY */
+    $("open-display-btn").addEventListener("click", () => {
+      displayWindow = window.open("display.html", "family100_display", "width=1280,height=720,menubar=no,toolbar=no");
+      if (displayWindow) {
+        toast("📺 Layar tampilan proyektor dibuka di jendela baru!");
+        setTimeout(() => broadcastState(), 600);
+      }
+    });
+
+    $("test-sound-btn").addEventListener("click", () => {
+      broadcastSound("correct");
+      toast("🔔 Mengirim sinyal bunyi 'Benar' ke layar tampilan.");
+    });
+
+    /* EVENT LISTENERS KONTROL */
+    $("check-btn").addEventListener("click", checkAnswer);
+    $("answer-input").addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        checkAnswer();
+      }
+    });
+
+    $("wrong-btn").addEventListener("click", markWrong);
+    $("switch-btn").addEventListener("click", switchTeam);
+    $("reset-x-btn").addEventListener("click", resetStrikes);
+    $("reveal-all-btn").addEventListener("click", revealAll);
+    $("next-question-btn").addEventListener("click", nextQuestion);
+    $("prev-question-btn").addEventListener("click", prevQuestion);
+    $("reset-round-btn").addEventListener("click", resetRound);
+    $("reset-game-btn").addEventListener("click", resetGame);
+
+    // Ubah Nama Tim
+    [0, 1].forEach(i => {
+      $("name-in-" + i).addEventListener("input", e => {
+        state.names[i] = e.target.value.trim() || `Tim ${i + 1}`;
+        render();
+        broadcastState({ type: "UPDATE_NAMES" });
+      });
+    });
+
+    // Cek cache localStorage jika ada state sebelumnya
+    try {
+      const cached = localStorage.getItem("family100_sync");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.state) {
+          state.index = parsed.state.index ?? 0;
+          state.scores = parsed.state.scores ?? [0, 0];
+          state.names = parsed.state.names ?? ["Tim 1", "Tim 2"];
+          state.active = parsed.state.active ?? 0;
+          state.strikes = parsed.state.strikes ?? [0, 0];
+          state.opened = parsed.state.opened ?? [];
+          state.ended = !!parsed.state.ended;
+          $("name-in-0").value = state.names[0];
+          $("name-in-1").value = state.names[1];
+        }
+      }
+    } catch (e) {}
+
+    // Inisialisasi awal
+    render();
+    broadcastState();
+  </script>
+</body>
+</html>
